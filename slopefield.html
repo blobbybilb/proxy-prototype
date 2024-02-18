@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slope Field and Table Generator</title>
+    <style>
+      body {
+        background-color: black;
+        color: white;
+        font-family: monospace;
+        text-align: center;
+        width: 95vw;
+        margin: none;
+        padding: none;
+      }
+
+      canvas {
+        margin: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Slope Field and Table Generator</h1>
+
+    <script type="module">
+      const xvals = [-2, -1, 0, 1, 2]
+      const yvals = [2, 1, 0, -1, -2]
+
+      function makeHTMLTable(func, xvals, yvals) {
+        const table = document.createElement("table")
+        const thead = document.createElement("thead")
+        const tbody = document.createElement("tbody")
+
+        // Create the table header
+        const headerRow = document.createElement("tr")
+        for (let x of xvals) {
+          const th = document.createElement("th")
+          th.textContent = x
+          headerRow.appendChild(th)
+        }
+        thead.appendChild(headerRow)
+
+        // Create the table body
+        for (let y of yvals) {
+          const bodyRow = document.createElement("tr")
+          for (let x of xvals) {
+            const td = document.createElement("td")
+            td.textContent = Math.round(func(x, y) * 100) / 100
+            td.style.border = "1px solid white"
+            bodyRow.appendChild(td)
+          }
+          tbody.appendChild(bodyRow)
+        }
+
+        table.appendChild(thead)
+        table.appendChild(tbody)
+
+        return table
+      }
+
+      function makeSlopeField(func, xvals, yvals) {
+        const canvas = document.createElement("canvas")
+        canvas.width = 500
+        canvas.height = 500
+        const ctx = canvas.getContext("2d")
+        ctx.strokeStyle = "white"
+
+        for (let y of yvals) {
+          for (let x of xvals) {
+            const slope = func(x, y)
+            const startX = (x + 2) * 100
+            const startY = (2 - y) * 100
+            const endX = startX + 10
+            const endY = startY + 10 * slope
+            ctx.beginPath()
+            ctx.moveTo(startX, startY)
+            ctx.lineTo(endX, endY)
+            ctx.stroke()
+          }
+        }
+
+        return canvas
+      }
+
+      // 1) f(x, y) = y
+      const h3label = document.createElement("h3")
+      h3label.textContent = "1) f(x, y) = y"
+      document.body.appendChild(h3label)
+
+      const table = makeHTMLTable((x, y) => y, xvals, yvals)
+      document.body.appendChild(table)
+
+      const slopeField = makeSlopeField((x, y) => y, xvals, yvals)
+      document.body.appendChild(slopeField)
+
+      document.body.appendChild(document.createElement("hr"))
+
+      // 2) f(x, y) = x + y
+      const h3label2 = document.createElement("h3")
+      h3label2.textContent = "2) f(x, y) = x + y"
+      document.body.appendChild(h3label2)
+
+      const table2 = makeHTMLTable((x, y) => x + y, xvals, yvals)
+      document.body.appendChild(table2)
+
+      const slopeField2 = makeSlopeField((x, y) => x + y, xvals, yvals)
+      document.body.appendChild(slopeField2)
+
+      document.body.appendChild(document.createElement("hr"))
+
+      // 3) f(x, y) = -x/y
+      const h3label3 = document.createElement("h3")
+      h3label3.textContent = "3) f(x, y) = -x/y"
+      document.body.appendChild(h3label3)
+
+      const table3 = makeHTMLTable((x, y) => -x / y, xvals, yvals)
+      document.body.appendChild(table3)
+
+      const slopeField3 = makeSlopeField((x, y) => -x / y, xvals, yvals)
+      document.body.appendChild(slopeField3)
+
+      document.body.appendChild(document.createElement("hr"))
+
+      // 4) f(x, y) = x - y
+      const h3label4 = document.createElement("h3")
+      h3label4.textContent = "4) f(x, y) = x - y"
+      document.body.appendChild(h3label4)
+
+      const table4 = makeHTMLTable((x, y) => x - y, xvals, yvals)
+      document.body.appendChild(table4)
+
+      const slopeField4 = makeSlopeField((x, y) => x - y, xvals, yvals)
+      document.body.appendChild(slopeField4)
+
+      document.body.appendChild(document.createElement("hr"))
+
+      // 5) f(x, y) = y^2
+      const h3label5 = document.createElement("h3")
+      h3label5.textContent = "5) f(x, y) = y^2"
+      document.body.appendChild(h3label5)
+
+      const table5 = makeHTMLTable((x, y) => Math.pow(y, 2), xvals, yvals)
+      document.body.appendChild(table5)
+
+      const slopeField5 = makeSlopeField((x, y) => Math.pow(y, 2), xvals, yvals)
+      document.body.appendChild(slopeField5)
+
+      document.body.appendChild(document.createElement("hr"))
+
+      // 6) f(x, y) = x(1+y)(2-y)
+      const h3label6 = document.createElement("h3")
+      h3label6.textContent = "6) f(x, y) = x(1+y)(2-y)"
+      document.body.appendChild(h3label6)
+
+      const table6 = makeHTMLTable(
+        (x, y) => x * (1 + y) * (2 - y),
+        xvals,
+        yvals
+      )
+      document.body.appendChild(table6)
+
+      const slopeField6 = makeSlopeField(
+        (x, y) => x * (1 + y) * (2 - y),
+        xvals,
+        yvals
+      )
+      document.body.appendChild(slopeField6)
+
+      document.body.appendChild(document.createElement("hr"))
+
+      // 7) f(x, y) = x + cos(pi*y/2)
+      const h3label7 = document.createElement("h3")
+      h3label7.textContent = "7) f(x, y) = x + cos(pi*y/2)"
+      document.body.appendChild(h3label7)
+
+      const table7 = makeHTMLTable(
+        (x, y) => x + Math.cos((Math.PI * y) / 2),
+        xvals,
+        yvals
+      )
+      document.body.appendChild(table7)
+
+      const slopeField7 = makeSlopeField(
+        (x, y) => x + Math.cos((Math.PI * y) / 2),
+        xvals,
+        yvals
+      )
+      document.body.appendChild(slopeField7)
+
+      document.body.appendChild(document.createElement("hr"))
+    </script>
+  </body>
+</html>
