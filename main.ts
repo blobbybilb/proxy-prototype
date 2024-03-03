@@ -1,29 +1,37 @@
-// Web Proxy, proxies all HTTP requests through this
-
-import {
-  DOMParser,
-  HTMLDocument,
-} from "https://deno.land/x/deno_dom@v0.1.45/deno-dom-wasm.ts"
-import { modifyTags } from "./helpers.ts"
-
 async function reqHandler(req: Request): Promise<Response> {
-  const reqPath = new URL(req.url).pathname
+  const reqPath =
+    new URL(req.url).pathname.substring(1) + new URL(req.url).search
 
-  const response = await fetch("https://" + reqPath, { headers: req.headers })
+  if (reqPath === "") {
+    const index = await Deno.readTextFile("test.html")
+    return new Response(index, {
+      headers: {
+        "Content-Type": "text/html",
+      },
+    })
+  }
 
+  if (reqPath === "sw.js") {
+    const sw = await Deno.readTextFile("sw.js")
+    return new Response(sw, {
+      headers: {
+        "Content-Type": "application/javascript",
+      },
+    })
+  }
+
+  const response = await fetch(new Request(reqPath, req))
   const responseBody = await response.text()
-  const modifiedResponseBody = performModifications(responseBody)
+  if (response.headers.get("Content-Type")?.includes("text/html")) {
+    const modifiedResponseBody =
+      responseBody +
+      `<script>
+      navigator.serviceWorker.getRegistrations().then(r => r.active.postMessage("reload"))
+        </script>`
+    return new Response(modifiedResponseBody, response)
+  }
 
-  const modifiedResponse = new Response(modifiedResponseBody, response)
-
-  return modifiedResponse
-}
-
-function performModifications(text: string): string {
-  return (
-    modifyTags(new DOMParser().parseFromString(text, "text/html")!)
-      .documentElement?.outerHTML ?? ""
-  )
+  return new Response(responseBody, response)
 }
 
 Deno.serve({

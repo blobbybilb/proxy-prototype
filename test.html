@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    Hello World
+    <a href="test2.html">Test2</a>
+</body>
+<script type="module">
+    // navigator.serviceWorker.getRegistrations().then(r => r.forEach(reg => reg.unregister()))
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register('http://localhost:8080/sw.js').then(function (reg) {
+            if (!reg.active) console.warn('ERROR serviceworker not installed')
+            reg.active.postMessage(location.href)
+        }).catch(function (err) {
+            console.warn('ERROR registration failed: ' + err)
+        })
+    } else {
+        console.warn('ERROR serviceworker not supported')
+    }
+</script>
+
+</html>
