@@ -9,20 +9,26 @@
 
 <body>
     Hello World
-    <a href="test2.html">Test2</a>
+    <a href="test3.html">Test2</a>
 </body>
 <script type="module">
     // navigator.serviceWorker.getRegistrations().then(r => r.forEach(reg => reg.unregister()))
     if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register('http://localhost:8080/sw.js').then(function (reg) {
-            if (!reg.active) console.warn('ERROR serviceworker not installed')
-            reg.active.postMessage(location.href)
+        navigator.serviceWorker.register('/sw.js').then(function (reg) {
+            if (reg.active) console.warn("serviceworker active")
+            else console.warn('ERROR serviceworker not active')
         }).catch(function (err) {
             console.warn('ERROR registration failed: ' + err)
         })
     } else {
         console.warn('ERROR serviceworker not supported')
     }
+
+    const channel = new BroadcastChannel('sw-messages');
+    channel.addEventListener('message', event => {
+        console.log('Received', event.data);
+    });
+    console.log("set listener")
 </script>
 
 </html>

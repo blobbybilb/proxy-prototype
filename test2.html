@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    this is test2.html
+</body>
+<script>
+    async function newFetch(...args) {
+        const reg = await navigator.serviceWorker.ready
+        reg.active.postMessage(
+            args[0],
+        );
+        const res = await window.oldFetch(...args)
+        res.originalUrl = args[0]
+        return res
+    }
+
+    window.oldFetch = window.fetch
+    delete window.fetch
+    window.fetch = newFetch
+
+    const channel = new BroadcastChannel('sw-messages');
+    channel.addEventListener('message', event => {
+        console.log('test2 Received', event.data);
+    });
+    console.log("set listener")
+
+    fetch("/messa8e.json").then(r => r.json())
+        .then((x) => console.log('test2.html: fetch /message.json: ', x)).catch(console.warn)
+</script>
+
+</html>
